@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{35B90AA1-7789-4574-AA31-39102D846257}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSeek.ApiHttpClient", "src\DeepSeek.ApiHttpClient\DeepSeek.ApiHttpClient.csproj", "{59ABFAC6-3A38-4365-B312-88A869786AFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSeek.ApiHttpClient.Demo", "src\DeepSeek.ApiHttpClient.Demo\DeepSeek.ApiHttpClient.Demo.csproj", "{13D02C82-6ED1-4533-904F-8C65C9B7F782}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59ABFAC6-3A38-4365-B312-88A869786AFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59ABFAC6-3A38-4365-B312-88A869786AFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59ABFAC6-3A38-4365-B312-88A869786AFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59ABFAC6-3A38-4365-B312-88A869786AFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13D02C82-6ED1-4533-904F-8C65C9B7F782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13D02C82-6ED1-4533-904F-8C65C9B7F782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13D02C82-6ED1-4533-904F-8C65C9B7F782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13D02C82-6ED1-4533-904F-8C65C9B7F782}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{59ABFAC6-3A38-4365-B312-88A869786AFC} = {35B90AA1-7789-4574-AA31-39102D846257}
+		{13D02C82-6ED1-4533-904F-8C65C9B7F782} = {35B90AA1-7789-4574-AA31-39102D846257}
+	EndGlobalSection
+EndGlobal
