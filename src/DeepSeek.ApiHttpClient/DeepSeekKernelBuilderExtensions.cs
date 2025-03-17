@@ -1,3 +1,4 @@
+using DeepSeek.ApiHttpClient.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -7,14 +8,6 @@ namespace DeepSeek.ApiHttpClient;
 
 public static class DeepSeekKernelBuilderExtensions
 {
-    public static DeepSeekConfig Config { get; set; } = new DeepSeekConfig();
-
-    public static IServiceCollection UseDeepSeek(this IServiceCollection serviceCollection, DeepSeekConfig config)
-    {
-        Config = config;
-        return serviceCollection;
-    }
-
     public static IKernelBuilder AddDeepSeekChatCompletion(
         this IKernelBuilder builder,
         string? apiKey = null,
@@ -42,22 +35,26 @@ public static class DeepSeekKernelBuilderExtensions
         {
             throw new ArgumentNullException(nameof(services));
         }
-        
+
+        var builder = DeepSeekClientBuilder.Build();
         if (apiKey != null)
         {
-            Config.ApiKey = apiKey;
+            builder.SetApiKey(apiKey);
         }
 
         if (modelId != null)
         {
-            Config.Model = modelId;
+            builder.SetModel(modelId);
         }
 
         if (endpoint != null)
         {
-            Config.Endpoint = endpoint;
+            builder.SetEndpoint(endpoint);
         }
 
-        return services.AddKeyedSingleton<IChatCompletionService>(serviceId, new DeepSeekChatCompletionService());
+        return services.AddKeyedSingleton<IChatCompletionService>(serviceId, new DeepSeekChatCompletionService
+        {
+            DeepSeekClient = builder.CreateDeepSeekClient()
+        });
     }
 }

@@ -9,6 +9,8 @@ public class DeepSeekChatCompletionService : IChatCompletionService
 {
     public IReadOnlyDictionary<string, object?> Attributes { get; }
 
+    public required DeepSeekClient DeepSeekClient { get; init; }
+
     public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings? executionSettings = null,
         Kernel? kernel = null, CancellationToken cancellationToken = new CancellationToken())
     {
@@ -18,14 +20,11 @@ public class DeepSeekChatCompletionService : IChatCompletionService
             chatMessageHistories.Add(new ChatMessageHistory()
             {
                 Role = chatMessage.Role.ToString(),
-                Content = chatMessage?.Content??""
+                Content = chatMessage.Content??""
             });
         }
-        var response = await DeepSeekClient.Create()
-            .SetApiKey(DeepSeekKernelBuilderExtensions.Config.ApiKey)
-            .SetEndpoint(DeepSeekKernelBuilderExtensions.Config.Endpoint)
-            .SetModelId(DeepSeekKernelBuilderExtensions.Config.Model)
-            .SetChatMessageHistory(chatMessageHistories)
+
+        var response = await DeepSeekClient.SetChatMessageHistory(chatMessageHistories)
             .GetChatMessageContentsAsync(cancellationToken);
         List<ChatMessageContent> chatMessageContents = new List<ChatMessageContent>();
         foreach (var choice in response.Choices)
@@ -50,15 +49,11 @@ public class DeepSeekChatCompletionService : IChatCompletionService
             chatMessageHistories.Add(new ChatMessageHistory()
             {
                 Role = chatMessage.Role.ToString(),
-                Content = chatMessage?.Content ?? ""
+                Content = chatMessage.Content ?? ""
             });
         }
 
-        var response = DeepSeekClient.Create()
-            .SetApiKey(DeepSeekKernelBuilderExtensions.Config.ApiKey)
-            .SetEndpoint(DeepSeekKernelBuilderExtensions.Config.Endpoint)
-            .SetModelId(DeepSeekKernelBuilderExtensions.Config.Model)
-            .SetChatMessageHistory(chatMessageHistories)
+        var response = DeepSeekClient.SetChatMessageHistory(chatMessageHistories)
             .GetStreamingChatMessageContentsAsync(cancellationToken);
         await foreach (var item in response)
         {

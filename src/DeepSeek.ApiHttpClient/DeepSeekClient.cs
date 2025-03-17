@@ -5,53 +5,24 @@ using Stargazer.Common.Extend;
 
 namespace DeepSeek.ApiHttpClient;
 
-public class DeepSeekClient()
+public class DeepSeekClient
 {
-    private string _apiKey = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-    private string _endpoint = "https://api.deepseek.com/chat/completions";
-    private string _modelId = "deepseek-chat";
-    private RequestBody _body = new();
+    private readonly DeepSeekClientBuilder _builder;
+    private readonly RequestBody _body = new();
 
-    public static DeepSeekClient Create()
+    public DeepSeekClient(DeepSeekClientBuilder builder)
     {
-        return new DeepSeekClient();
+        _builder = builder;
+        _body.Model = builder.Model;
+        _body.MaxTokens = builder.MaxTokens;
+        _body.Temperature = builder.Temperature;
+        _body.TopP = builder.TopP;
+        _body.FrequencyPenalty = builder.FrequencyPenalty;
+        _body.PresencePenalty = builder.PresencePenalty;
+        _body.Logprobs = builder.Logprobs;
+        _body.TopLogprobs = builder.TopLogprobs;
     }
-    
-    public DeepSeekClient SetApiKey(string apiKey)
-    {
-        _apiKey = apiKey;
-        return this;
-    }
-    
-    public DeepSeekClient SetModelId(string modelId)
-    {
-        _modelId = modelId;
-        _body.Model = _modelId;
-        return this;
-    }
-    public DeepSeekClient SetEndpoint(string endpoint)
-    {
-        _endpoint = endpoint;
-        return this;
-    }
-    
-    public DeepSeekClient SetTemperature(double temperature)
-    {
-        _body.Temperature = temperature;
-        return this;
-    }
-    
-    public DeepSeekClient SetMaxTokens(int maxTokens)
-    {
-        _body.MaxTokens = maxTokens;
-        return this;
-    }
-    public DeepSeekClient SetTopP(double topP)
-    {
-        _body.TopP = topP;
-        return this;
-    }
-    
+
     public DeepSeekClient SetChatMessageHistory(List<ChatMessageHistory> histories)
     {
         _body.Messages = histories;
@@ -61,9 +32,9 @@ public class DeepSeekClient()
     public async Task<ResponseBody> GetChatMessageContentsAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         var client = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, _endpoint);
+        var request = new HttpRequestMessage(HttpMethod.Post, _builder.Endpoint);
         request.Headers.Add("Accept", "application/json");
-        request.Headers.Add("Authorization", "Bearer " + _apiKey);
+        request.Headers.Add("Authorization", $"Bearer {_builder.ApiKey}");
 
         _body.Stream = false;
         var content = new StringContent(_body.SerializeObject(), null, "application/json");
@@ -76,9 +47,9 @@ public class DeepSeekClient()
     public async IAsyncEnumerable<ResponseBody> GetStreamingChatMessageContentsAsync([EnumeratorCancellation] CancellationToken cancellationToken = new CancellationToken())
     {
         var client = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, _endpoint);
+        var request = new HttpRequestMessage(HttpMethod.Post, _builder.Endpoint);
         request.Headers.Add("Accept", "application/json");
-        request.Headers.Add("Authorization", "Bearer " + _apiKey);
+        request.Headers.Add("Authorization", $"Bearer {_builder.ApiKey}");
         
         _body.Stream = true;
         var content = new StringContent(_body.SerializeObject(), null, "application/json");

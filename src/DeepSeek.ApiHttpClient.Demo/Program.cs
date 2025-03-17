@@ -1,11 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.ClientModel;
 using DeepSeek.ApiHttpClient;
 using DeepSeek.ApiHttpClient.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using OpenAI;
 
-string apiKey = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+string apiKey = "sk-xxxxxxxxxx";
 string endpoint = "https://api.deepseek.com/chat/completions";
 string modelId = "deepseek-chat";
 
@@ -29,10 +31,11 @@ List<ChatMessageHistory> histories = new List<ChatMessageHistory>()
 };
 
 // Create a chat message
-var chatMessage = await DeepSeekClient.Create()
+var chatMessage = await DeepSeekClientBuilder.Build()
     .SetApiKey(apiKey)
     .SetEndpoint(endpoint)
-    .SetModelId(modelId)
+    .SetModel(modelId)
+    .CreateDeepSeekClient()
     .SetChatMessageHistory(histories)
     .GetChatMessageContentsAsync();
 
@@ -41,10 +44,11 @@ Console.WriteLine("😀User >> "+ histories.Last().Content);
 Console.WriteLine("👨Assistant >> "+ chatMessage.Choices.Last().Message.Content);
 
 // Create a streaming chat message
-var streamingChatMessage = DeepSeekClient.Create()
+var streamingChatMessage = DeepSeekClientBuilder.Build()
     .SetApiKey(apiKey)
     .SetEndpoint(endpoint)
-    .SetModelId(modelId)
+    .SetModel(modelId)
+    .CreateDeepSeekClient()
     .SetChatMessageHistory(histories)
     .GetStreamingChatMessageContentsAsync();
 
@@ -105,3 +109,33 @@ await foreach (var item in streamingChatMessage2)
     Console.Write(item.Content);
 }
 
+Console.WriteLine("");
+Console.WriteLine("");
+Console.WriteLine("----------------------------------");
+Console.WriteLine("----------------------------------");
+Console.WriteLine("");
+
+Console.WriteLine("Create a sk chat completion service with tools");
+
+var openAIClientCredential = new ApiKeyCredential(apiKey);
+var openAIClientOption = new OpenAIClientOptions
+{
+    Endpoint = new Uri("https://api.deepseek.com"),
+
+};
+var builder1 = Kernel.CreateBuilder()
+    .AddOpenAIChatCompletion(modelId, new OpenAIClient(openAIClientCredential, openAIClientOption));
+
+var kernel1 = builder1.Build();
+var chatCompletionService1 = kernel1.GetRequiredService<IChatCompletionService>();
+
+Console.WriteLine("😀User >> "+ chatHistory.Last().Content);
+var result = chatCompletionService1.GetStreamingChatMessageContentsAsync(
+    chatHistory
+);
+Console.Write("👨Assistant >> ");
+await foreach (var item in result)
+{
+    Thread.Sleep(200);
+    Console.Write(item.Content);
+}
